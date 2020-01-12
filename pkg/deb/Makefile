@@ -17,7 +17,7 @@ comma:= ,
 empty:=
 space:= $(empty) $(empty)
 
-ifeq ($(OS),$(filter $(OS),debian8 debian9 ubuntu16.04 ubuntu18.04))
+ifeq ($(OS),$(filter $(OS),debian8 debian9 ubuntu16.04 ubuntu18.04 ubuntu19.10))
 	USE_SYSTEMD = 1
 	CONF_VERSION = _systemd
 	DEPS = 
@@ -29,7 +29,7 @@ ifeq ($(EDITION),community)
   DEPS += python
 endif
 
-DEB = $(PKG)/packages/aerospike-server-$(EDITION)-$(REV).$(OS).x86_64.deb
+DEB = $(PKG)/packages/aerospike-server-$(EDITION)-$(REV).$(OS).$(ARCH).deb
 
 ifeq ($(USE_EE),1)
 all:	dist-ee package clean
@@ -124,6 +124,11 @@ endif
 	install -pm 755 $(DEPTH)/tools/memacct/asparsemem $(OPT_AS)/bin
 
 	sed 's/@VERSION@/'$(REV)'/g' < $(PKG)/deb/server-64 > $(BUILD_ROOT)/DEBIAN/control
+ifeq ($(ARCH), x86_64)
+	sed -i 's/@ARCH@/'amd64'/g' $(BUILD_ROOT)/DEBIAN/control
+else ifeq ($(ARCH), aarch64)
+	sed -i 's/@ARCH@/'arm64'/g' $(BUILD_ROOT)/DEBIAN/control
+endif
 	sed -i 's/@EDITION@/'$(EDITION)'/g' $(BUILD_ROOT)/DEBIAN/control
 	sed -i 's/@SIZE@/'$(SIZE)'/g' $(BUILD_ROOT)/DEBIAN/control
 	sed -i 's/@DEPS@/$(addprefix $(comma), $(subst $(space),$(comma),$(strip $(DEPS))))/g' $(BUILD_ROOT)/DEBIAN/control
