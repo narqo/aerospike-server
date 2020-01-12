@@ -231,7 +231,7 @@ run_accept(void* udata)
 		cf_assert(n_events >= 0, AS_SERVICE, "unexpected EINTR");
 
 		for (uint32_t i = 0; i < (uint32_t)n_events; i++) {
-			cf_socket* ssock = events[i].data;
+			cf_socket* ssock = events[i].data.ptr;
 			cf_socket csock;
 			cf_sock_addr caddr;
 
@@ -336,7 +336,7 @@ run_service(void* udata)
 		cf_assert(n_events >= 0, AS_SERVICE, "unexpected EINTR");
 
 		for (uint32_t i = 0; i < (uint32_t)n_events; i++) {
-			as_file_handle* fd_h = events[i].data;
+			as_file_handle* fd_h = events[i].data.ptr;
 
 			if ((events[i].events & (EPOLLRDHUP | EPOLLERR | EPOLLHUP)) != 0) {
 				service_release_file_handle(fd_h);
