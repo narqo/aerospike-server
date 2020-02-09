@@ -83,6 +83,9 @@ COMMON_CFLAGS += -Werror
 
 CFLAGS = $(COMMON_CFLAGS) -DMARCH_$(MARCH_NATIVE)
 
+# Disable GCC 9 warning about pointers to members of a packed struct
+CFLAGS += -Wno-address-of-packed-member
+
 # Define a macro for the base source file name.
 DEF_FN += -D__FILENAME__=\"$(notdir $<)\"
 
